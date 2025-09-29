@@ -101,6 +101,20 @@ const katakanaCharacters = [
 // Current state
 let currentMode = 'menu'; // 'menu', 'hiragana', 'katakana'
 
+// Settings state
+let settings = {
+    showRomaji: true,
+    noRepeatMode: false,
+    autoAdvanceMode: false
+};
+
+// No repeat mode state
+let usedHiraganaIndices = [];
+let usedKatakanaIndices = [];
+
+// Auto advance timer
+let autoAdvanceTimer = null;
+
 // DOM elements
 const elements = {
     mainMenu: document.getElementById('main-menu'),
@@ -120,8 +134,14 @@ const elements = {
     katakanaShowAll: document.getElementById('katakana-show-all'),
     hiraganaGrid: document.getElementById('hiragana-grid'),
     katakanaGrid: document.getElementById('katakana-grid'),
-    hiraganaRomajiToggle: document.getElementById('hiragana-romaji-toggle'),
-    katakanaRomajiToggle: document.getElementById('katakana-romaji-toggle')
+    hiraganaSettingsBtn: document.getElementById('hiragana-settings-btn'),
+    katakanaSettingsBtn: document.getElementById('katakana-settings-btn'),
+    settingsOverlay: document.getElementById('settings-overlay'),
+    closeSettings: document.getElementById('close-settings'),
+    popupRomajiToggle: document.getElementById('popup-romaji-toggle'),
+    noRepeatMode: document.getElementById('no-repeat-mode'),
+    autoAdvanceMode: document.getElementById('auto-advance-mode'),
+    resetSettings: document.getElementById('reset-settings')
 };
 
 // Initialize the application
@@ -148,9 +168,21 @@ function setupEventListeners() {
     elements.hiraganaShowAll.addEventListener('click', () => toggleHiraganaGrid());
     elements.katakanaShowAll.addEventListener('click', () => toggleKatakanaGrid());
     
-    // Romaji toggle checkboxes
-    elements.hiraganaRomajiToggle.addEventListener('change', () => toggleHiraganaRomaji());
-    elements.katakanaRomajiToggle.addEventListener('change', () => toggleKatakanaRomaji());
+    // Settings popup
+    elements.hiraganaSettingsBtn.addEventListener('click', () => openSettings());
+    elements.katakanaSettingsBtn.addEventListener('click', () => openSettings());
+    elements.closeSettings.addEventListener('click', () => closeSettings());
+    elements.settingsOverlay.addEventListener('click', (e) => {
+        if (e.target === elements.settingsOverlay) {
+            closeSettings();
+        }
+    });
+    
+    // Settings controls
+    elements.popupRomajiToggle.addEventListener('change', () => updateRomajiSetting());
+    elements.noRepeatMode.addEventListener('change', () => updateNoRepeatMode());
+    elements.autoAdvanceMode.addEventListener('change', () => updateAutoAdvanceMode());
+    elements.resetSettings.addEventListener('click', () => resetAllSettings());
 }
 
 // Navigation functions
@@ -159,6 +191,9 @@ function showMainMenu() {
     elements.mainMenu.classList.remove('hidden');
     elements.hiraganaPage.classList.add('hidden');
     elements.katakanaPage.classList.add('hidden');
+    
+    // Stop auto advance when leaving learning pages
+    stopAutoAdvanceTimer();
 }
 
 function showHiraganaPage() {
@@ -168,9 +203,19 @@ function showHiraganaPage() {
     elements.katakanaPage.classList.add('hidden');
     
     // Reset the display
-    elements.hiraganaCharacter.textContent = 'Click "Next" to start learning!';
+    elements.hiraganaCharacter.textContent = 'start learning!';
     elements.hiraganaRomaji.textContent = '';
     elements.hiraganaGrid.classList.add('hidden');
+    
+    // Start auto advance if enabled
+    if (settings.autoAdvanceMode) {
+        // Give user a moment to see the page before auto advance starts
+        setTimeout(() => {
+            if (currentMode === 'hiragana') {
+                showRandomHiragana();
+            }
+        }, 1000);
+    }
 }
 
 function showKatakanaPage() {
@@ -180,23 +225,58 @@ function showKatakanaPage() {
     elements.katakanaPage.classList.remove('hidden');
     
     // Reset the display
-    elements.katakanaCharacter.textContent = 'Click "Next" to start learning!';
+    elements.katakanaCharacter.textContent = 'start learning!';
     elements.katakanaRomaji.textContent = '';
     elements.katakanaGrid.classList.add('hidden');
+    
+    // Start auto advance if enabled
+    if (settings.autoAdvanceMode) {
+        // Give user a moment to see the page before auto advance starts
+        setTimeout(() => {
+            if (currentMode === 'katakana') {
+                showRandomKatakana();
+            }
+        }, 1000);
+    }
 }
 
 // Random character functions
-function getRandomCharacter(characterArray) {
-    const randomIndex = Math.floor(Math.random() * characterArray.length);
-    return characterArray[randomIndex];
+function getRandomCharacter(characterArray, usedIndices) {
+    if (settings.noRepeatMode) {
+        // If all characters have been used, reset the used indices
+        if (usedIndices.length >= characterArray.length) {
+            usedIndices.length = 0;
+        }
+        
+        // Find unused indices
+        let availableIndices = [];
+        for (let i = 0; i < characterArray.length; i++) {
+            if (!usedIndices.includes(i)) {
+                availableIndices.push(i);
+            }
+        }
+        
+        // Get random index from available indices
+        const randomAvailableIndex = Math.floor(Math.random() * availableIndices.length);
+        const selectedIndex = availableIndices[randomAvailableIndex];
+        
+        // Mark this index as used
+        usedIndices.push(selectedIndex);
+        
+        return characterArray[selectedIndex];
+    } else {
+        // Normal random selection
+        const randomIndex = Math.floor(Math.random() * characterArray.length);
+        return characterArray[randomIndex];
+    }
 }
 
 function showRandomHiragana() {
-    const randomChar = getRandomCharacter(hiraganaCharacters);
+    const randomChar = getRandomCharacter(hiraganaCharacters, usedHiraganaIndices);
     elements.hiraganaCharacter.textContent = randomChar.character;
     
-    // Show romaji only if checkbox is checked
-    if (elements.hiraganaRomajiToggle.checked) {
+    // Show romaji based on settings
+    if (settings.showRomaji) {
         elements.hiraganaRomaji.textContent = randomChar.romaji;
     } else {
         elements.hiraganaRomaji.textContent = '';
@@ -207,14 +287,19 @@ function showRandomHiragana() {
     setTimeout(() => {
         elements.hiraganaCharacter.style.transform = 'scale(1)';
     }, 100);
+    
+    // Reset auto advance timer if enabled
+    if (settings.autoAdvanceMode) {
+        startAutoAdvanceTimer('hiragana');
+    }
 }
 
 function showRandomKatakana() {
-    const randomChar = getRandomCharacter(katakanaCharacters);
+    const randomChar = getRandomCharacter(katakanaCharacters, usedKatakanaIndices);
     elements.katakanaCharacter.textContent = randomChar.character;
     
-    // Show romaji only if checkbox is checked
-    if (elements.katakanaRomajiToggle.checked) {
+    // Show romaji based on settings
+    if (settings.showRomaji) {
         elements.katakanaRomaji.textContent = randomChar.romaji;
     } else {
         elements.katakanaRomaji.textContent = '';
@@ -225,6 +310,11 @@ function showRandomKatakana() {
     setTimeout(() => {
         elements.katakanaCharacter.style.transform = 'scale(1)';
     }, 100);
+    
+    // Reset auto advance timer if enabled
+    if (settings.autoAdvanceMode) {
+        startAutoAdvanceTimer('katakana');
+    }
 }
 
 // Grid display functions
@@ -257,8 +347,8 @@ function showHiraganaGrid() {
     elements.hiraganaGrid.classList.remove('hidden');
     elements.hiraganaShowAll.textContent = 'Hide Characters';
     
-    // Update romaji display based on checkbox
-    updateGridRomajiDisplay('hiragana', elements.hiraganaRomajiToggle.checked);
+    // Update romaji display based on settings
+    updateGridRomajiDisplay('hiragana', settings.showRomaji);
 }
 
 function showKatakanaGrid() {
@@ -272,8 +362,8 @@ function showKatakanaGrid() {
     elements.katakanaGrid.classList.remove('hidden');
     elements.katakanaShowAll.textContent = 'Hide Characters';
     
-    // Update romaji display based on checkbox
-    updateGridRomajiDisplay('katakana', elements.katakanaRomajiToggle.checked);
+    // Update romaji display based on settings
+    updateGridRomajiDisplay('katakana', settings.showRomaji);
 }
 
 function createGridItem(character) {
@@ -295,10 +385,10 @@ function createGridItem(character) {
     gridItem.addEventListener('click', () => {
         if (currentMode === 'hiragana') {
             elements.hiraganaCharacter.textContent = character.character;
-            elements.hiraganaRomaji.textContent = elements.hiraganaRomajiToggle.checked ? character.romaji : '';
+            elements.hiraganaRomaji.textContent = settings.showRomaji ? character.romaji : '';
         } else if (currentMode === 'katakana') {
             elements.katakanaCharacter.textContent = character.character;
-            elements.katakanaRomaji.textContent = elements.katakanaRomajiToggle.checked ? character.romaji : '';
+            elements.katakanaRomaji.textContent = settings.showRomaji ? character.romaji : '';
         }
         
         // Add click animation
@@ -311,45 +401,37 @@ function createGridItem(character) {
     return gridItem;
 }
 
-// Romaji toggle functions
-function toggleHiraganaRomaji() {
-    const isChecked = elements.hiraganaRomajiToggle.checked;
-    
-    if (!isChecked) {
+// Romaji toggle functions (for settings popup)
+function updateCurrentRomajiDisplay() {
+    // Update hiragana display
+    if (!settings.showRomaji) {
         elements.hiraganaRomaji.textContent = '';
     } else {
-        // If there's a character displayed, show its romaji
-        const currentChar = elements.hiraganaCharacter.textContent;
-        if (currentChar && currentChar !== 'Click "Next" to start learning!') {
-            const charData = hiraganaCharacters.find(char => char.character === currentChar);
+        const currentHiraganaChar = elements.hiraganaCharacter.textContent;
+        if (currentHiraganaChar && currentHiraganaChar !== 'start learning!') {
+            const charData = hiraganaCharacters.find(char => char.character === currentHiraganaChar);
             if (charData) {
                 elements.hiraganaRomaji.textContent = charData.romaji;
             }
         }
     }
     
-    // Also update grid romaji display
-    updateGridRomajiDisplay('hiragana', isChecked);
-}
-
-function toggleKatakanaRomaji() {
-    const isChecked = elements.katakanaRomajiToggle.checked;
-    
-    if (!isChecked) {
+    // Update katakana display
+    if (!settings.showRomaji) {
         elements.katakanaRomaji.textContent = '';
     } else {
-        // If there's a character displayed, show its romaji
-        const currentChar = elements.katakanaCharacter.textContent;
-        if (currentChar && currentChar !== 'Click "Next" to start learning!') {
-            const charData = katakanaCharacters.find(char => char.character === currentChar);
+        const currentKatakanaChar = elements.katakanaCharacter.textContent;
+        if (currentKatakanaChar && currentKatakanaChar !== 'start learning!') {
+            const charData = katakanaCharacters.find(char => char.character === currentKatakanaChar);
             if (charData) {
                 elements.katakanaRomaji.textContent = charData.romaji;
             }
         }
     }
     
-    // Also update grid romaji display
-    updateGridRomajiDisplay('katakana', isChecked);
+    // Update grid displays
+    updateGridRomajiDisplay('hiragana', settings.showRomaji);
+    updateGridRomajiDisplay('katakana', settings.showRomaji);
 }
 
 function updateGridRomajiDisplay(type, showRomaji) {
@@ -359,6 +441,93 @@ function updateGridRomajiDisplay(type, showRomaji) {
     romajiElements.forEach(element => {
         element.style.display = showRomaji ? 'block' : 'none';
     });
+}
+
+// Settings popup functions
+function openSettings() {
+    elements.settingsOverlay.classList.remove('hidden');
+    
+    // Sync popup checkboxes with current settings
+    elements.popupRomajiToggle.checked = settings.showRomaji;
+    elements.noRepeatMode.checked = settings.noRepeatMode;
+    elements.autoAdvanceMode.checked = settings.autoAdvanceMode;
+}
+
+function closeSettings() {
+    elements.settingsOverlay.classList.add('hidden');
+}
+
+function updateRomajiSetting() {
+    settings.showRomaji = elements.popupRomajiToggle.checked;
+    
+    // Update current display
+    updateCurrentRomajiDisplay();
+}
+
+function updateNoRepeatMode() {
+    settings.noRepeatMode = elements.noRepeatMode.checked;
+    
+    // Reset used indices when toggling
+    usedHiraganaIndices.length = 0;
+    usedKatakanaIndices.length = 0;
+}
+
+function updateAutoAdvanceMode() {
+    settings.autoAdvanceMode = elements.autoAdvanceMode.checked;
+    
+    if (settings.autoAdvanceMode) {
+        // Start auto advance if we're on a learning page
+        if (currentMode === 'hiragana' || currentMode === 'katakana') {
+            startAutoAdvanceTimer(currentMode);
+        }
+    } else {
+        // Stop auto advance
+        stopAutoAdvanceTimer();
+    }
+}
+
+function resetAllSettings() {
+    // Reset to default settings
+    settings.showRomaji = true;
+    settings.noRepeatMode = false;
+    settings.autoAdvanceMode = false;
+    
+    // Update all checkboxes
+    elements.popupRomajiToggle.checked = true;
+    elements.noRepeatMode.checked = false;
+    elements.autoAdvanceMode.checked = false;
+    
+    // Reset used indices
+    usedHiraganaIndices.length = 0;
+    usedKatakanaIndices.length = 0;
+    
+    // Stop auto advance
+    stopAutoAdvanceTimer();
+    
+    // Update displays
+    updateCurrentRomajiDisplay();
+}
+
+// Auto advance timer functions
+function startAutoAdvanceTimer(mode) {
+    stopAutoAdvanceTimer(); // Clear any existing timer
+    
+    autoAdvanceTimer = setInterval(() => {
+        if (mode === 'hiragana' && currentMode === 'hiragana') {
+            showRandomHiragana();
+        } else if (mode === 'katakana' && currentMode === 'katakana') {
+            showRandomKatakana();
+        } else {
+            stopAutoAdvanceTimer(); // Stop if mode changed
+        }
+    }, 5000); // 5 seconds
+}
+
+function stopAutoAdvanceTimer() {
+    if (autoAdvanceTimer) {
+        clearInterval(autoAdvanceTimer);
+        autoAdvanceTimer = null;
+    }
 }
 
 // Add smooth transitions
@@ -379,7 +548,10 @@ document.addEventListener('keydown', (event) => {
             break;
         case 'Escape':
             event.preventDefault();
-            if (currentMode !== 'menu') {
+            // Check if settings popup is open first
+            if (!elements.settingsOverlay.classList.contains('hidden')) {
+                closeSettings();
+            } else if (currentMode !== 'menu') {
                 showMainMenu();
             }
             break;

@@ -30,13 +30,16 @@
         <!-- Hiragana Learning Page -->
         <div id="hiragana-page" class="learning-page hidden">
             <div class="page-header">
-                <button id="back-from-hiragana" class="back-btn">← Back to Menu</button>
-                <h2>Hiragana Learning</h2>
+                <div class="left-section">
+                    <button id="back-from-hiragana" class="back-btn">← Back to Menu</button>
+                    <h2>Hiragana Learning</h2>
+                </div>
+                <button id="hiragana-settings-btn" class="settings-btn">⚙️ Settings</button>
             </div>
             
             <div class="character-display">
                 <div id="hiragana-character" class="character">
-                    Click "Next" to start learning!
+                    start learning!
                 </div>
                 <div id="hiragana-romaji" class="romaji"></div>
             </div>
@@ -44,10 +47,6 @@
             <div class="controls">
                 <button id="hiragana-next" class="next-btn">Next Character</button>
                 <button id="hiragana-show-all" class="show-all-btn">Show All Characters</button>
-                <div class="checkbox-container">
-                    <input type="checkbox" id="hiragana-romaji-toggle" checked>
-                    <label for="hiragana-romaji-toggle">Show Romaji</label>
-                </div>
             </div>
 
             <div id="hiragana-grid" class="character-grid hidden"></div>
@@ -56,13 +55,16 @@
         <!-- Katakana Learning Page -->
         <div id="katakana-page" class="learning-page hidden">
             <div class="page-header">
-                <button id="back-from-katakana" class="back-btn">← Back to Menu</button>
-                <h2>Katakana Learning</h2>
+                <div class="left-section">
+                    <button id="back-from-katakana" class="back-btn">← Back to Menu</button>
+                    <h2>Katakana Learning</h2>
+                </div>
+                <button id="katakana-settings-btn" class="settings-btn">⚙️ Settings</button>
             </div>
             
             <div class="character-display">
                 <div id="katakana-character" class="character">
-                    Click "Next" to start learning!
+                    start learning!
                 </div>
                 <div id="katakana-romaji" class="romaji"></div>
             </div>
@@ -70,13 +72,47 @@
             <div class="controls">
                 <button id="katakana-next" class="next-btn">Next Character</button>
                 <button id="katakana-show-all" class="show-all-btn">Show All Characters</button>
-                <div class="checkbox-container">
-                    <input type="checkbox" id="katakana-romaji-toggle" checked>
-                    <label for="katakana-romaji-toggle">Show Romaji</label>
-                </div>
             </div>
 
             <div id="katakana-grid" class="character-grid hidden"></div>
+        </div>
+
+        <!-- Settings Popup -->
+        <div id="settings-overlay" class="overlay hidden">
+            <div class="settings-popup">
+                <div class="popup-header">
+                    <h3>⚙️ Settings</h3>
+                    <button id="close-settings" class="close-btn">×</button>
+                </div>
+                <div class="popup-content">
+                    <div class="setting-item">
+                        <input type="checkbox" id="popup-romaji-toggle" checked>
+                        <label for="popup-romaji-toggle">
+                            <span class="setting-title">Show Romaji</span>
+                            <span class="setting-desc">Display pronunciation guide below characters</span>
+                        </label>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <input type="checkbox" id="no-repeat-mode">
+                        <label for="no-repeat-mode">
+                            <span class="setting-title">No Repeat Mode</span>
+                            <span class="setting-desc">Show each character once before repeating</span>
+                        </label>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <input type="checkbox" id="auto-advance-mode">
+                        <label for="auto-advance-mode">
+                            <span class="setting-title">Auto Advance (5s)</span>
+                            <span class="setting-desc">Automatically show new character every 5 seconds</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="popup-footer">
+                    <button id="reset-settings" class="reset-btn">Reset to Default</button>
+                </div>
+            </div>
         </div>
     </div>
 
