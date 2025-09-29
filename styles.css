@@ -1,0 +1,340 @@
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #333;
+}
+
+.container {
+    max-width: 800px;
+    width: 90%;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    min-height: 600px;
+}
+
+/* Header Styles */
+header {
+    background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+    color: white;
+    text-align: center;
+    padding: 2rem;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    font-weight: 300;
+}
+
+header p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+/* Menu Container */
+.menu-container {
+    padding: 3rem 2rem;
+    text-align: center;
+}
+
+.button-group {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* Main Buttons */
+.main-btn {
+    background: linear-gradient(45deg, #4CAF50, #45a049);
+    border: none;
+    border-radius: 15px;
+    padding: 2rem 3rem;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 200px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.main-btn:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+}
+
+.main-btn .japanese {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.main-btn .english {
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+.katakana-btn {
+    background: linear-gradient(45deg, #2196F3, #1976D2);
+}
+
+/* Learning Page */
+.learning-page {
+    padding: 2rem;
+    min-height: 500px;
+}
+
+.learning-page.hidden {
+    display: none;
+}
+
+.page-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2rem;
+    gap: 1rem;
+}
+
+.back-btn {
+    background: #f44336;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.3s ease;
+}
+
+.back-btn:hover {
+    background: #d32f2f;
+}
+
+.page-header h2 {
+    font-size: 2rem;
+    color: #333;
+}
+
+/* Character Display */
+.character-display {
+    text-align: center;
+    margin: 3rem 0;
+    background: #f8f9fa;
+    border-radius: 15px;
+    padding: 3rem;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.character {
+    font-size: 8rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: #2c3e50;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.romaji {
+    font-size: 2rem;
+    color: #666;
+    font-style: italic;
+}
+
+/* Controls */
+.controls {
+    text-align: center;
+    margin: 2rem 0;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.next-btn {
+    background: linear-gradient(45deg, #FF9800, #F57C00);
+    border: none;
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.next-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.show-all-btn {
+    background: linear-gradient(45deg, #9C27B0, #7B1FA2);
+    border: none;
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.show-all-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Checkbox Styling */
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #f8f9fa;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.checkbox-container:hover {
+    border-color: #007bff;
+    background: #e3f2fd;
+}
+
+.checkbox-container input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #007bff;
+}
+
+.checkbox-container label {
+    font-size: 1rem;
+    color: #333;
+    cursor: pointer;
+    font-weight: 500;
+    user-select: none;
+}
+
+/* Character Grid */
+.character-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+    padding: 2rem;
+    background: #f8f9fa;
+    border-radius: 15px;
+}
+
+.character-grid.hidden {
+    display: none;
+}
+
+.grid-item {
+    background: white;
+    padding: 1rem;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+}
+
+.grid-item:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.grid-character {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.grid-romaji {
+    font-size: 0.9rem;
+    color: #666;
+    font-style: italic;
+}
+
+/* Hidden utility class */
+.hidden {
+    display: none !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        width: 95%;
+        margin: 1rem;
+    }
+
+    header h1 {
+        font-size: 2rem;
+    }
+
+    .main-btn {
+        min-width: 150px;
+        padding: 1.5rem 2rem;
+    }
+
+    .character {
+        font-size: 5rem;
+    }
+
+    .romaji {
+        font-size: 1.5rem;
+    }
+
+    .button-group {
+        gap: 1rem;
+    }
+
+    .controls {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .checkbox-container {
+        margin-top: 0.5rem;
+    }
+
+    .character-grid {
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+        gap: 0.5rem;
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .character {
+        font-size: 4rem;
+    }
+
+    .main-btn .japanese {
+        font-size: 1.5rem;
+    }
+}

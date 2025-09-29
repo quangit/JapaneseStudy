@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japanese Learning - Hiragana & Katakana</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Japanese Learning</h1>
+            <p>Learn Hiragana and Katakana Characters</p>
+        </header>
+
+        <!-- Main Menu -->
+        <div id="main-menu" class="menu-container">
+            <div class="button-group">
+                <button id="hiragana-btn" class="main-btn hiragana-btn">
+                    <span class="japanese">ひらがな</span>
+                    <span class="english">Hiragana</span>
+                </button>
+                <button id="katakana-btn" class="main-btn katakana-btn">
+                    <span class="japanese">カタカナ</span>
+                    <span class="english">Katakana</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Hiragana Learning Page -->
+        <div id="hiragana-page" class="learning-page hidden">
+            <div class="page-header">
+                <button id="back-from-hiragana" class="back-btn">← Back to Menu</button>
+                <h2>Hiragana Learning</h2>
+            </div>
+            
+            <div class="character-display">
+                <div id="hiragana-character" class="character">
+                    Click "Next" to start learning!
+                </div>
+                <div id="hiragana-romaji" class="romaji"></div>
+            </div>
+            
+            <div class="controls">
+                <button id="hiragana-next" class="next-btn">Next Character</button>
+                <button id="hiragana-show-all" class="show-all-btn">Show All Characters</button>
+                <div class="checkbox-container">
+                    <input type="checkbox" id="hiragana-romaji-toggle" checked>
+                    <label for="hiragana-romaji-toggle">Show Romaji</label>
+                </div>
+            </div>
+
+            <div id="hiragana-grid" class="character-grid hidden"></div>
+        </div>
+
+        <!-- Katakana Learning Page -->
+        <div id="katakana-page" class="learning-page hidden">
+            <div class="page-header">
+                <button id="back-from-katakana" class="back-btn">← Back to Menu</button>
+                <h2>Katakana Learning</h2>
+            </div>
+            
+            <div class="character-display">
+                <div id="katakana-character" class="character">
+                    Click "Next" to start learning!
+                </div>
+                <div id="katakana-romaji" class="romaji"></div>
+            </div>
+            
+            <div class="controls">
+                <button id="katakana-next" class="next-btn">Next Character</button>
+                <button id="katakana-show-all" class="show-all-btn">Show All Characters</button>
+                <div class="checkbox-container">
+                    <input type="checkbox" id="katakana-romaji-toggle" checked>
+                    <label for="katakana-romaji-toggle">Show Romaji</label>
+                </div>
+            </div>
+
+            <div id="katakana-grid" class="character-grid hidden"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
